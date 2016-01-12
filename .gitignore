@@ -1,12 +1,93 @@
-*.class
+package me.stuppsman.tutorial;
 
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Server;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.enchantment.EnchantItemEvent;
+import org.bukkit.event.player.PlayerBedEnterEvent;
+import org.bukkit.event.player.PlayerBedLeaveEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerItemDamageEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerKickEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 
-# Package Files #
-*.jar
-*.war
-*.ear
+public class Tutorial extends JavaPlugin implements Listener {
 
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
+	@Override
+	public void onDisable() {
+		System.out.print(ChatColor.GREEN + "[Tutorial] wurde deaktivert");
+	}
+
+	@Override
+	public void onEnable() {
+		
+		getCommand("Ts3").setExecutor(this);
+		
+		Bukkit.getPluginManager().registerEvents(this, this);
+		
+		System.out.print(ChatColor.RED + "[Tutorial] wurde geladn");
+		
+	}
+
+	@Override
+	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+		
+		if(sender instanceof Player){
+			
+			if(command.getName().equalsIgnoreCase("Ts3")){
+				
+				sender.sendMessage(ChatColor.GREEN + "Die Ts3 Ip ist ts28.nitrado.net:20300");return true;
+				
+			}
+			
+		}else{
+			sender.sendMessage("Nur Spieler dürfen disen Command ausführen!");
+		}
+
+		return false;
+	}
+	
+	@EventHandler
+	public void PlayerJoin(PlayerJoinEvent e) {
+		Player p = e.getPlayer();
+		e.setJoinMessage((ChatColor.GREEN + p.getName() + " hat den Server betreten"));
+	}
+	@EventHandler
+	public void PlayerQuit(PlayerQuitEvent e) {
+		Player p = e.getPlayer();
+		e.setQuitMessage((ChatColor.RED + p.getName() + " hat den Server verlassen"));
+	}
+	@EventHandler
+	public void PlayerKick(PlayerKickEvent e) {
+		Player p = e.getPlayer();
+		e.setLeaveMessage((ChatColor.RED + p.getName() + " wurde Gekickt"));		
+	}
+	@EventHandler
+	public void onWorldChange(PlayerChangedWorldEvent event){
+		 event.getPlayer().sendMessage("Du bist jetzt " + event.getPlayer().getWorld().getName());
+		}
+	@EventHandler
+	public void  PlayerBedEnter(PlayerBedEnterEvent Bed) {	
+		Bed.getPlayer().getServer().broadcastMessage("Der Player " + Bed.getPlayer().getName()+(" möchte Schlafen"));
+	}
+	@EventHandler
+	public void PlayerBedLeave(PlayerBedLeaveEvent Bed) { 
+		Bed.getPlayer().getServer().broadcastMessage("Der Player " + Bed.getPlayer().getName()+(" ist aus den Bett aufgestiegen"));	
+	}
+	@EventHandler
+	public void EnchantItem (EnchantItemEvent EIE) {
+		EIE.getEnchanter().giveExpLevels(2);
+		((Server) EIE).broadcastMessage("Hatte Glück oder auch nicht :=)");	
+		}
+	@EventHandler
+	public void PlayerItemDamage (PlayerItemDamageEvent PID) {
+		PID.setDamage(2);
+	}
+}
